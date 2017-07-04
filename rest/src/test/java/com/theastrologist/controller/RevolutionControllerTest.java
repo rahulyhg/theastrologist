@@ -313,4 +313,23 @@ public class RevolutionControllerTest {
 		verify(controllerUtil);
 	}
 
+	@Test
+	public void testSimpleSolarBug() {
+		expect(controllerUtil.queryGoogleForTimezone(anyDouble(), anyDouble(), anyLong()))
+				.andReturn(DateTimeZone.forID("Europe/Paris")).times(2);
+		replay(controllerUtil);
+
+		MockMvcResponse response = get(
+				"/{natal_date}/{natal_address}/revolution/lunar/{from_date}/{anniversary_address}",
+				"1959-05-16T08:40:00",
+				"Casablanca",
+				"2017-05-01",
+				"Paris");
+
+		response.then().statusCode(200)
+				.body("date", equalTo("2017-05-04T12:50:02+02:00"));
+
+		verify(controllerUtil);
+	}
+
 }
